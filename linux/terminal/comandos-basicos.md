@@ -592,7 +592,11 @@ scp /home/dario/descargas/foto_oculta.jpg DARIO@192.168.1.130:/mnt/c/Users/DARIO
 ```bash
 scp -r /home/dario/descargas/carpeta DARIO@192.168.1.130:/mnt/c/Users/DARIO/Downloads/
 ```
-
+**Copiar Archivos y Carpetas de Linux a Windows con scp(PowerShell):**
+```bash
+PS C:\Users\DARIO\Desktop> scp dario@192.168.175.152:/home/dario/descargas/archivo3.txt .
+PS C:\Users\DARIO\Desktop> scp -r dario@192.168.175.152:/home/dario/descargas/mi_proyecto .
+```
 **Notas importantes:**
 - Te pedirá la contraseña del usuario destino
 - SSH debe estar activo en el sistema destino
