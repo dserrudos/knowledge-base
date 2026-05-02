@@ -1,4 +1,4 @@
-# Writeup — Odyssey v2
+# SOLUCION — Odyssey v2
 
 **Dificultad:** Media  
 **Servicios:** HTTP (nginx), SSH  
@@ -200,12 +200,6 @@ cat /root/.hide/.last/.flag.txt
 | 3 | Credenciales codificadas en Base64/hex (no cifradas) | Ofuscación trivialmente reversible | CWE-261 |
 | 4 | Credenciales SSH ocultas mediante esteganografía | Acceso root si se descubren las imágenes clave | CWE-311 |
 | 5 | SSH accesible con usuario root directamente | Sin capa intermedia de usuario limitado | CWE-250 |
-
----
-
-## Cyber Kill Chain
-
-Ver [kill_chain.md](kill_chain.md)
 
 ---
 
