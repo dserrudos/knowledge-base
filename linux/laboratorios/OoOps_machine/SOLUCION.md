@@ -1,4 +1,4 @@
-# Writeup — OoOps Machine
+# Solucion — OoOps Machine
 
 **Dificultad:** Media  
 **Servicios:** FTP, HTTP, SSH  
