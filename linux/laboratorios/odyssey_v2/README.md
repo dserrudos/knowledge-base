@@ -32,7 +32,6 @@ Este repositorio documenta el proceso de compromiso de la maquina Odyssey v2. El
 ## Documentacion de la Solucion
 
 *   [SOLUCION.md](./SOLUCION.md) — Writeup paso a paso con comandos y explicaciones
-*   [kill_chain.md](./kill_chain.md) — Ruta de compromiso segun el modelo Cyber Kill Chain
 
 ## Aviso Legal y Etica
 
