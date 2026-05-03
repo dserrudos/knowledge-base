@@ -18,7 +18,8 @@ Este repositorio documenta el proceso de intrusion y compromiso de la maquina Oo
 ## Documentacion de la Solucion
 El informe detallado con los comandos ejecutados y la metodologia seguida se encuentra en el siguiente archivo:
 
-*   [SOLUCION.md](./SOLUCION.md)
+*   [SOLUCION.md](./SOLUCION.md) — Writeup paso a paso con comandos y explicaciones
+*   [kill_chain.md](./kill_chain.md) — Visión panorámica de la cadena de ataque completa (Cyber Kill Chain)
 
 ## Aviso Legal y Etica
 Los archivos necesarios para el despliegue de la infraestructura (Dockerfiles, scripts de configuracion) no se incluyen en este repositorio para respetar la propiedad intelectual de los creadores originales. Este contenido tiene una finalidad exclusivamente didactica.

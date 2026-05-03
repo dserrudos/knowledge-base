@@ -235,6 +235,14 @@ cat /root/flag.txt
 
 ---
 
+## Cyber Kill Chain
+
+Visión panorámica de la cadena de ataque completa siguiendo el modelo Lockheed Martin:
+
+Ver [kill_chain.md](./kill_chain.md)
+
+---
+
 ## Comandos de limpieza
 
 ```bash
