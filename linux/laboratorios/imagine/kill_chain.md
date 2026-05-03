@@ -1,154 +1,52 @@
-# Kill Chain — Imagine
+# Cyber Kill Chain — Imagine
 
-## Resumen ejecutivo
-
-| Fase | Técnica | Vector | Resultado |
-|------|---------|--------|-----------|
-| Reconocimiento | Port scanning | nmap -sV -sC | Apache 80, SSH 2222 identificados |
-| Enumeración web | Directory fuzzing | ffuf + wordlist | Recursos sensibles descubiertos |
-| Análisis de información | Decodificación Base64 | Nombre de fichero + contenido | Credenciales SSH obtenidas |
-| Acceso inicial | Autenticación SSH | Usuario + contraseña filtrada | Shell como `jude` |
-| Flag 1 | Lectura de fichero | cat .flag.txt | Flag de usuario obtenida |
-| Post-explotación | Análisis de shadow | /etc/shadow | Misconfiguration identificada (teórico) |
+Modelo **Lockheed Martin Cyber Kill Chain** aplicado a la ruta de compromiso de este reto.  
+El objetivo es documentar cada fase como si fuera un ataque real, no solo una secuencia de comandos.
 
 ---
 
-## Detalle de la cadena
+## Las 7 fases
 
-### 1. Reconocimiento de red
-
-**Objetivo:** Mapear la superficie de ataque expuesta.
-
-```bash
-nmap -sV -sC -p- <IP>
-```
-
-**Hallazgos:**
-- Puerto 80 → Apache HTTP Server 2.4.62 (Alpine Linux)
-- Puerto 2222 → OpenSSH 9.3
-
-**Por qué importa:** Dos superficies de ataque independientes. La aplicación web es el vector de entrada para obtener credenciales; SSH es el vector de acceso una vez obtenidas.
+| Fase | Descripción general | Acción en este reto | Herramienta |
+|------|--------------------|--------------------|-------------|
+| **1. Reconocimiento** | El atacante recopila información sobre el objetivo | Escaneo de puertos; identificación de Apache y SSH en puerto no estándar | `nmap -sV -sC -p-` |
+| **2. Armamento** | El atacante prepara la técnica de ataque | Identificación del fichero con credenciales y decodificación Base64 | `ffuf`, `curl`, `base64` |
+| **3. Entrega** | El atacante envía el ataque al objetivo | No aplica — las credenciales ya están expuestas en el servidor web | — |
+| **4. Explotación** | Se aprovecha la vulnerabilidad | Uso de las credenciales obtenidas para autenticarse por SSH | `ssh` |
+| **5. Instalación** | El atacante establece persistencia | No aplica en este reto (CTF de lectura, no de persistencia) | — |
+| **6. C2 (Command & Control)** | El atacante controla el sistema comprometido | Shell interactiva como `jude` vía SSH | `ssh jude@<IP> -p 2222` |
+| **7. Acción sobre objetivos** | El atacante logra su objetivo final | Lectura de la flag en el directorio home del usuario comprometido | `cat ~/.flag.txt` |
 
 ---
 
-### 2. Enumeración web
-
-**Objetivo:** Descubrir recursos web no enlazados que puedan contener información sensible.
-
-```bash
-ffuf -c \
-  -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt \
-  -u http://<IP>/FUZZ \
-  -e .php,.html,.txt \
-  -mc 200 -fs 45 -t 50
-```
-
-**Hallazgos clave:**
-
-| Recurso | Tipo de información |
-|---------|---------------------|
-| `creditcard.html` | Nombres de usuario del sistema |
-| Fichero con nombre en Base64 | Credenciales de acceso SSH (codificadas) |
-| `xcart.tgz` | Pistas adicionales sobre credenciales |
-| `index.php.bak` | Backup de código fuente expuesto |
-
-**Por qué importa:** Un atacante sin conocimiento previo puede recuperar nombres de usuario válidos y credenciales simplemente explorando la aplicación web. No se requiere ninguna vulnerabilidad de software — solo malas prácticas de despliegue.
-
----
-
-### 3. Extracción de credenciales
-
-**Objetivo:** Descifrar la información encontrada para obtener credenciales válidas.
-
-**Paso 1 — Decodificar el nombre del fichero:**
-```bash
-echo "<nombre_en_base64>" | base64 -d
-```
-El nombre decodificado revela el propósito del fichero.
-
-**Paso 2 — Decodificar el contenido del fichero:**
-El contenido también está en Base64. Aplicar el mismo proceso revela la contraseña en texto claro.
-
-**Por qué importa:** Base64 es una codificación, no un cifrado. No ofrece ninguna protección real. Cualquier atacante con acceso al fichero puede recuperar el valor original en milisegundos.
-
----
-
-### 4. Acceso inicial — Shell como usuario
-
-**Objetivo:** Usar las credenciales obtenidas para autenticarse en el servicio SSH.
-
-```bash
-ssh <usuario>@<IP> -p 2222
-```
-
-**Resultado:** Shell interactiva como usuario de bajos privilegios.
-
----
-
-### 5. Flag 1 — Objetivo completado
-
-```bash
-ls -la ~
-cat ~/<fichero_flag>
-```
-
-**Resultado:** Flag de usuario obtenida en el directorio home del usuario comprometido.
-
----
-
-### 6. Post-explotación — Análisis de escalada (teórico)
-
-**Objetivo:** Evaluar si existe una vía para escalar a root.
-
-```bash
-# Inspección de shadow
-cat /etc/shadow | grep root
-
-# Binarios SUID
-find / -perm -4000 -type f 2>/dev/null
-
-# Directorios escribibles
-find / -writable -not -path '*/proc/*' -not -path '*/sys/*' 2>/dev/null
-```
-
-**Hallazgo:** La entrada de root en `/etc/shadow` contiene `*` en el campo de contraseña. En Alpine Linux con `busybox su` instalado con bit SUID, esto permitiría `su root` sin contraseña (CWE-258). En esta imagen, el vector no es explotable porque `busybox` carece del bit SUID, pero el hallazgo debe documentarse en un informe real como vulnerabilidad de configuración.
-
----
-
-## Diagrama de ataque
+## Diagrama de la cadena
 
 ```
-[Atacante - Kali Linux]
-        │
-        ▼  nmap → descubre Apache:80 y SSH:2222
-        │
-        ▼  ffuf → enumera recursos web
-        │
-        ├──► creditcard.html ──► extrae nombres de usuario válidos
-        │
-        ├──► fichero (nombre en Base64) ──► decodifica nombre → accede al recurso
-        │                                  decodifica contenido → obtiene contraseña
-        │
-        ▼  SSH :2222 con credenciales obtenidas
-        │
-[Shell como jude]
-        │
-        ▼  cat ~/.flag.txt ──► FLAG 1 obtenida ✓
-        │
-        ▼  cat /etc/shadow → root:* → misconfiguration documentada
-        │
-[Análisis post-explotación completado]
+[nmap] → puerto 80 (Apache) y puerto 2222 (SSH)
+    ↓
+[ffuf] → descubre ficheros web con información sensible
+    ↓
+[curl + base64 -d] → decodifica nombre y contenido del fichero
+    ↓
+credenciales SSH en texto claro
+    ↓
+[ssh jude@<IP> -p 2222]
+    ↓
+[cat ~/.flag.txt]
+    ↓
+FLAG 1 ✓
+    ↓
+[cat /etc/shadow] → root:* → misconfiguration documentada (CWE-258)
 ```
 
 ---
 
-## Referencias técnicas
+## Lecciones aprendidas
 
-| Referencia | Descripción |
-|-----------|-------------|
-| CWE-200 | Exposure of Sensitive Information to an Unauthorized Actor |
-| CWE-256 | Plaintext Storage of a Password |
-| CWE-258 | Empty Password in Configuration File |
-| OWASP A02:2021 | Cryptographic Failures |
-| OWASP A05:2021 | Security Misconfiguration |
-| OWASP Testing Guide OTG-INFO-001 | Information Gathering |
+1. **La oscuridad no es seguridad.** Codificar el nombre de un fichero en Base64 no lo oculta. Las herramientas de fuzzing prueban cientos de miles de rutas por minuto; un nombre inusual no detiene al atacante, solo lo ralentiza segundos.
+
+2. **Los ficheros web son públicos por definición.** Cualquier fichero dentro del webroot es accesible por cualquier persona en internet. Las credenciales, backups o código fuente nunca deben estar en el webroot sin autenticación.
+
+3. **La enumeración encadena los pasos.** Todo el compromiso se basó en enumeración metódica: nmap → ffuf → decodificación → SSH → flag. No fue necesaria ninguna vulnerabilidad de software, solo malas prácticas de despliegue.
+
+4. **`*` y `!` no son lo mismo en `/etc/shadow`.** En sistemas que usan busybox (Alpine Linux, entornos embebidos), el hash `*` puede equivaler a "sin contraseña". El estándar correcto para deshabilitar una cuenta es `passwd -l`, que genera `!`. Esta distinción es crítica en entornos de producción con Linux embebido.
