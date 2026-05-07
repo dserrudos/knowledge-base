@@ -44,6 +44,16 @@ Repositorio personal que contiene manuales, guías y referencias técnicas para 
 ### 5. Proyectos
 - Documentación de Proyectos (Pendiente)
 
+### 6. IFP — Guías de Estudio Pareto
+
+Preparación de exámenes con el Método Pareto: el 20% del contenido que genera el 80% de los puntos.
+Cada módulo incluye guía de temas adyacentes + simulacro con corrección del profesor.
+
+- [Seguridad y Alta Disponibilidad — Guía Pareto](ifp/seg-alta-disp/guia-pareto-estudio.md)
+- [Seguridad y Alta Disponibilidad — Simulacro de Examen](ifp/seg-alta-disp/simulacro-examen.md)
+- [Hacking Ético — Guía Pareto](ifp/haking-etico/guia-pareto-estudio.md)
+- [Hacking Ético — Simulacro de Examen](ifp/haking-etico/simulacro-examen.md)
+
 ---
 
 ## Uso del Repositorio
@@ -60,15 +70,16 @@ grep -r "palabra clave" .
 
 | Categoría | Total de Guías | Último Archivo Creado |
 | :--- | :---: | :--- |
-| **Total General** | 6 | `cheatsheets/git-comandos.md` |
+| **Total General** | 10 | `ifp/haking-etico/simulacro-examen.md` |
 | Linux | 1 | `linux/terminal/atajos.md` |
 | Windows | 1 | `windows/powershell/comandos-basicos.md` |
 | Desarrollo | 1 | `desarrollo/python/entornos-virtuales.md` |
 | Redes | 1 | `redes/protocolos/dns-explicacion.md` |
 | Bases de Datos | 1 | `bases-de-datos/mysql/backup-y-restore.md` |
 | Cheatsheets | 1 | `cheatsheets/git-comandos.md` |
+| IFP Pareto | 4 | `ifp/haking-etico/simulacro-examen.md` |
 
 ## Metadatos
 
-- **Última Actualización:** 05/12/2025
+- **Última Actualización:** 08/05/2026
 - **Licencia:** MIT License
